@@ -4,10 +4,9 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "json.hpp"
+#include "defines.h"
 #include "monster.h"
 
-#define WINDOW_WIDTH 500
-#define WINDOW_HEIGHT 500
 
 int main() {
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
@@ -25,7 +24,7 @@ int main() {
 		}
 
 		window.clear();
-		window.draw(monster1->getSprite());
+		monster1->draw(window);
 		window.display();
 	}
 

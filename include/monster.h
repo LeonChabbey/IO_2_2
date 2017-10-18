@@ -3,13 +3,11 @@
 
 #include "SFML\Graphics.hpp"
 #include <string>
+#include <map>
+#include "defines.h"
 
-enum class Race {
-	ORC,
-	GOBLIN,
-	TROLL,
-	LENGTH
-};
+enum class Race;
+struct RaceConfig;
 
 class Monster {
 private:
@@ -20,15 +18,23 @@ private:
 	Race race;
 	sf::Sprite sprite;
 	sf::Texture texture;
+	sf::Text healthUI;
+
+	bool validateRace(int);
 public:
 	Monster(std::string);
 
-	void attack();
+	void attack(Monster&);
+	void setHealthUI();
 
 	sf::Sprite getSprite();
 
+	void update();
+	void draw(sf::RenderWindow&);
 	~Monster();
 };
+
+RaceConfig getRaceConfig(Race&);
 
 
 #endif // !MONSTER_H

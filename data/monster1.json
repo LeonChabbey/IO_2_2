@@ -3,6 +3,5 @@
 	"health": 10,
 	"attackPower": 10,
 	"defensivePower": 10,
-	"speed": 3,
-	"texture": "skeleton.gif"
+	"speed": 3
 }

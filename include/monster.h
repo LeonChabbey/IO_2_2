@@ -29,7 +29,7 @@ public:
 	void attack(Monster&);
 	void setHealthUI();
 
-	sf::Sprite getSprite();
+	sf::Sprite& getSprite();
 
 	void update();
 	void draw(sf::RenderWindow&);

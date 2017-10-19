@@ -13,6 +13,7 @@ int main() {
 	window.setFramerateLimit(60);
 	
 	Monster* monster1 = new Monster("../data/monster1.json");
+	Monster* monster2 = new Monster("../data/monster2.json");
 
 	while (window.isOpen())
 	{
@@ -25,9 +26,11 @@ int main() {
 
 		window.clear();
 		monster1->draw(window);
+		monster2->draw(window);
 		window.display();
 	}
 
 	delete monster1;
+	delete monster2;
 	return 0;
 }

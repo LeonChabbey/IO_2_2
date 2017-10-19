@@ -41,7 +41,8 @@ Monster::Monster(std::string filePath) {
 
 	texture.loadFromFile(IMG_FOLDER_PATH + textureName);
 	sprite.setTexture(texture);
-	sprite.setScale(2.f, 2.f);
+	sprite.scale(1,1);
+	sprite.setPosition(0.f, 50.f);
 
 	setHealthUI();
 }
@@ -62,7 +63,6 @@ void Monster::attack(Monster& enemy) {
 }
 
 void Monster::setHealthUI() {
-	std::string text = std::to_string(health) + " HP";
 	std::string fontPath = std::string(FONT_FOLDER_PATH) + std::string(DEFAULT_FONT);
 
 	if (!font.loadFromFile(fontPath))
@@ -71,12 +71,11 @@ void Monster::setHealthUI() {
 	}
 
 	healthUI.setFont(font);
-	healthUI.setString(text);
 	healthUI.setCharacterSize(24);
 	healthUI.setFillColor(sf::Color::Red);
 }
 
-sf::Sprite Monster::getSprite() {
+sf::Sprite& Monster::getSprite() {
 	return sprite;
 }
 
@@ -86,11 +85,11 @@ bool Monster::validateRace(int chosenRace) {
 }
 
 void Monster::update() {
-	
+	healthUI.setString(std::to_string((int)health) + " HP");
 }
 
 void Monster::draw(sf::RenderWindow& window) {
-	//update();
+	update();
 	window.draw(healthUI);
 	window.draw(sprite);
 }

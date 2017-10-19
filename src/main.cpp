@@ -11,6 +11,7 @@
 int main() {
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
 	window.setFramerateLimit(60);
+	bool firstMonsterAttacking = true;
 	
 	Monster* monster1 = new Monster("../data/monster1.json");
 	Monster* monster2 = new Monster("../data/monster2.json");
@@ -24,6 +25,11 @@ int main() {
 				window.close();
 		}
 
+		if (firstMonsterAttacking)
+			monster1->attack(*monster2);
+
+		monster1->update();
+		monster2->update();
 		window.clear();
 		monster1->draw(window);
 		monster2->draw(window);

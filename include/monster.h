@@ -8,6 +8,9 @@
 
 enum class Race;
 struct RaceConfig;
+RaceConfig getRaceConfig(Race&);
+
+enum class MonsterState;
 
 class Monster {
 private:
@@ -35,8 +38,6 @@ public:
 	void draw(sf::RenderWindow&);
 	~Monster();
 };
-
-RaceConfig getRaceConfig(Race&);
 
 
 #endif // !MONSTER_H

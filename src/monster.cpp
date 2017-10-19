@@ -20,6 +20,30 @@ struct RaceConfig {
 	std::string fileName;
 };
 
+
+RaceConfig getRaceConfig(Race& race) {
+	RaceConfig raceConfig;
+	switch (race) {
+	case Race::ORC:
+		raceConfig.name = "Orc";
+		raceConfig.fileName = "orc.png";
+		break;
+	case Race::GOBLIN:
+		raceConfig.name = "Goblin";
+		raceConfig.fileName = "goblin.png";
+		break;
+	case Race::TROLL:
+		raceConfig.name = "Troll";
+		raceConfig.fileName = "troll.png";
+		break;
+	}
+	return raceConfig;
+}
+
+/////////////////////////////
+/////// Monster Class ///////
+/////////////////////////////
+
 Monster::Monster(std::string filePath) {
 	std::ifstream i(filePath);
 	json data;
@@ -43,12 +67,14 @@ Monster::Monster(std::string filePath) {
 	sprite.setTexture(texture);
 	sprite.scale(1,1);
 	sprite.setPosition(0.f, 50.f);
-
 	setHealthUI();
 }
 
 void Monster::attack(Monster& enemy) {
-	double damageTaken = attackPower - enemy.defensivePower;
+
+	sprite.move(1.f, 2.f);
+
+	/*double damageTaken = attackPower - enemy.defensivePower;
 
 	if (damageTaken <= 0)
 		damageTaken = 1;
@@ -59,7 +85,7 @@ void Monster::attack(Monster& enemy) {
 		enemy.health = 0;
 
 	std::cout << "The " << getRaceConfig(race).name << " attacks! The " 
-		<< getRaceConfig(enemy.race).name << " lost " << damageTaken << " HP.\n";
+		<< getRaceConfig(enemy.race).name << " lost " << damageTaken << " HP.\n";*/
 }
 
 void Monster::setHealthUI() {
@@ -79,7 +105,6 @@ sf::Sprite& Monster::getSprite() {
 	return sprite;
 }
 
-
 bool Monster::validateRace(int chosenRace) {
 	return chosenRace < (int)Race::LENGTH && chosenRace >= 0;
 }
@@ -89,31 +114,9 @@ void Monster::update() {
 }
 
 void Monster::draw(sf::RenderWindow& window) {
-	update();
 	window.draw(healthUI);
 	window.draw(sprite);
 }
 
 Monster::~Monster() {
-}
-
-
-
-RaceConfig getRaceConfig(Race& race) {
-	RaceConfig raceConfig;
-	switch (race) {
-		case Race::ORC:
-			raceConfig.name = "Orc";
-			raceConfig.fileName = "orc.png";
-			break;
-		case Race::GOBLIN:
-			raceConfig.name = "Goblin";
-			raceConfig.fileName = "goblin.png";
-			break;
-		case Race::TROLL:
-			raceConfig.name = "Troll";
-			raceConfig.fileName = "troll.png";
-			break;
-	}
-	return raceConfig;
 }

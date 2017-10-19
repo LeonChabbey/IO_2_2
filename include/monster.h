@@ -18,7 +18,8 @@ RaceConfig getRaceConfig(Race&);
 enum class MonsterState {
 	IDLE,
 	ATTACKING,
-	REPOSITIONING
+	REPOSITIONING,
+	DEAD
 };
 
 class Monster {
@@ -37,7 +38,7 @@ private:
 	
 	Monster* enemy = nullptr;
 
-	sf::Vector2f goToPosition(const sf::Vector2f&, const sf::Vector2f&, float);
+	sf::Vector2f goToPosition(const sf::Vector2f&, const sf::Vector2f&);
 
 public:
 	
@@ -46,10 +47,12 @@ public:
 	void attack();
 	void takeDamage(int);
 	void repositioningMonster();
+	void monsterDead();
 
 	void setMonsterState(MonsterState);
 	void setEnemy(Monster*);
 
+	double getHealth();
 	MonsterState getMonsterState();
 	double getSpeed();
 	sf::Vector2f getCurrentPosition();

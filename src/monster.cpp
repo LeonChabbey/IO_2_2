@@ -63,8 +63,6 @@ void Monster::attack(Monster& enemy) {
 
 void Monster::setHealthUI() {
 	std::string text = std::to_string(health) + " HP";
-
-	sf::Font font;
 	std::string fontPath = std::string(FONT_FOLDER_PATH) + std::string(DEFAULT_FONT);
 
 	if (!font.loadFromFile(fontPath))
@@ -88,13 +86,13 @@ bool Monster::validateRace(int chosenRace) {
 }
 
 void Monster::update() {
-
+	
 }
 
 void Monster::draw(sf::RenderWindow& window) {
 	//update();
 	window.draw(healthUI);
-	//window.draw(sprite);
+	window.draw(sprite);
 }
 
 Monster::~Monster() {

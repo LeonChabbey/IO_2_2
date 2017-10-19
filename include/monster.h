@@ -19,9 +19,11 @@ private:
 	sf::Sprite sprite;
 	sf::Texture texture;
 	sf::Text healthUI;
+	sf::Font font;
 
 	bool validateRace(int);
 public:
+	
 	Monster(std::string);
 
 	void attack(Monster&);

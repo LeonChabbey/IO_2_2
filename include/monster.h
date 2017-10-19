@@ -6,11 +6,20 @@
 #include <map>
 #include "defines.h"
 
-enum class Race;
+enum class Race {
+	ORC,
+	GOBLIN,
+	TROLL,
+	LENGTH
+};
 struct RaceConfig;
 RaceConfig getRaceConfig(Race&);
 
-enum class MonsterState;
+enum class MonsterState {
+	IDLE,
+	ATTACKING,
+	REPOSITIONING
+};
 
 class Monster {
 private:
@@ -18,20 +27,32 @@ private:
 		attackPower,
 		defensivePower,
 		speed;
+	sf::Vector2f startingPos;
 	Race race;
 	sf::Sprite sprite;
 	sf::Texture texture;
 	sf::Text healthUI;
 	sf::Font font;
+	MonsterState state;
+	
+	Monster* enemy = nullptr;
 
-	bool validateRace(int);
+	sf::Vector2f goToPosition(const sf::Vector2f&, const sf::Vector2f&, float);
+
 public:
 	
-	Monster(std::string);
+	Monster(std::string, sf::Vector2f);
 
-	void attack(Monster&);
-	void setHealthUI();
+	void attack();
+	void takeDamage(int);
+	void repositioningMonster();
 
+	void setMonsterState(MonsterState);
+	void setEnemy(Monster*);
+
+	MonsterState getMonsterState();
+	double getSpeed();
+	sf::Vector2f getCurrentPosition();
 	sf::Sprite& getSprite();
 
 	void update();

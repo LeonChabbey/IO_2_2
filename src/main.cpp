@@ -10,11 +10,16 @@
 
 int main() {
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
-	window.setFramerateLimit(60);
-	bool firstMonsterAttacking = true;
+	window.setFramerateLimit(30);
+	sf::Time dt, elapsedTime;
+	sf::Clock clock;
+
+	bool firstMonsterAttacking = true, firstRound = true;
 	
-	Monster* monster1 = new Monster("../data/monster1.json");
-	Monster* monster2 = new Monster("../data/monster2.json");
+	Monster* monster1 = new Monster("../data/monster1.json", sf::Vector2f(10.f, 60.f));
+	Monster* monster2 = new Monster("../data/monster2.json", sf::Vector2f(300.f, 60.f));
+	monster1->setEnemy(monster2);
+	monster2->setEnemy(monster1);
 
 	while (window.isOpen())
 	{
@@ -25,8 +30,24 @@ int main() {
 				window.close();
 		}
 
-		if (firstMonsterAttacking)
-			monster1->attack(*monster2);
+
+		if (firstRound) {
+			firstMonsterAttacking = monster1->getSpeed() > monster2->getSpeed() ? true : false;
+			firstRound = false;
+		}
+			
+
+		if (monster1->getMonsterState() == MonsterState::IDLE &&
+			monster2->getMonsterState() == MonsterState::IDLE) {
+
+			if (firstMonsterAttacking)
+				monster1->setMonsterState(MonsterState::ATTACKING);
+			else
+				monster2->setMonsterState(MonsterState::ATTACKING);
+
+			firstMonsterAttacking = !firstMonsterAttacking;
+		}
+			
 
 		monster1->update();
 		monster2->update();

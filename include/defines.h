@@ -8,4 +8,7 @@
 #define FONT_FOLDER_PATH "../data/font/"
 #define DEFAULT_FONT "HelveticaNeue.ttf"
 
+#define MONSTER_1_DEFAULT_POS_X
+#define MONSTER_1_POS_Y
+
 #endif // !DEFINES_H

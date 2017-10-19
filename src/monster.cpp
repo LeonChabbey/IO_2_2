@@ -8,12 +8,6 @@
 
 using json = nlohmann::json;
 
-enum class Race {
-	ORC,
-	GOBLIN,
-	TROLL,
-	LENGTH
-};
 
 struct RaceConfig {
 	std::string name;
@@ -40,17 +34,20 @@ RaceConfig getRaceConfig(Race& race) {
 	return raceConfig;
 }
 
+
 /////////////////////////////
 /////// Monster Class ///////
 /////////////////////////////
 
-Monster::Monster(std::string filePath) {
+Monster::Monster(std::string filePath, sf::Vector2f startingPosition) {
 	std::ifstream i(filePath);
 	json data;
 	i >> data;
 
-	if (validateRace(data["race"] - 1))
-		race = Race(data["race"] - 1);
+	int chosenRace = data["race"] - 1;
+
+	if (chosenRace < (int)Race::LENGTH && chosenRace >= 0)
+		race = Race(chosenRace);
 	else {
 		race = Race(0);
 		std::cout << "Race not valid, therefore using default '" << getRaceConfig(race).name << "'" << std::flush;
@@ -60,35 +57,17 @@ Monster::Monster(std::string filePath) {
 	attackPower = data["attackPower"];
 	defensivePower = data["defensivePower"];
 	speed = data["speed"];
+	startingPos = startingPosition;
+	state = MonsterState::IDLE;
 
+	// Texture/Sprite
 	std::string textureName = getRaceConfig(race).fileName;
-
 	texture.loadFromFile(IMG_FOLDER_PATH + textureName);
 	sprite.setTexture(texture);
-	sprite.scale(1,1);
-	sprite.setPosition(0.f, 50.f);
-	setHealthUI();
-}
-
-void Monster::attack(Monster& enemy) {
-
-	sprite.move(1.f, 2.f);
-
-	/*double damageTaken = attackPower - enemy.defensivePower;
-
-	if (damageTaken <= 0)
-		damageTaken = 1;
-
-	enemy.health -= damageTaken;
+	sprite.scale(0.1,0.1);
+	sprite.setPosition(startingPos);
 	
-	if (enemy.health <= 0)
-		enemy.health = 0;
-
-	std::cout << "The " << getRaceConfig(race).name << " attacks! The " 
-		<< getRaceConfig(enemy.race).name << " lost " << damageTaken << " HP.\n";*/
-}
-
-void Monster::setHealthUI() {
+	//HP Text
 	std::string fontPath = std::string(FONT_FOLDER_PATH) + std::string(DEFAULT_FONT);
 
 	if (!font.loadFromFile(fontPath))
@@ -101,16 +80,96 @@ void Monster::setHealthUI() {
 	healthUI.setFillColor(sf::Color::Red);
 }
 
+sf::Vector2f Monster::goToPosition(const sf::Vector2f& pointA, const sf::Vector2f& pointB, float speed) {
+	if (speed > 1.f)
+		speed = 1.f;
+
+	else if (speed < 0.f)
+		speed = 0.f;
+
+	return pointA + (pointB - pointA) * speed;
+}
+
+void Monster::attack() {
+
+	if (enemy == nullptr) {
+		state = MonsterState::REPOSITIONING;
+	} else {
+		std::cout << "blblbl ? : " << (sprite.getPosition() == enemy->getCurrentPosition()) << "\n" << std::flush;
+		
+		if (sprite.getPosition() == enemy->getCurrentPosition()) {
+			double damage = attackPower - enemy->defensivePower;
+
+			if (damage <= 0)
+				damage = 1;
+
+			enemy->takeDamage(damage);
+
+			state = MonsterState::REPOSITIONING;
+		} else {
+			sprite.setPosition(goToPosition(sprite.getPosition(), enemy->getCurrentPosition(), 0.3));
+		}
+
+	}
+}
+
+void Monster::takeDamage(int damage) {
+	if (health - damage < 0)
+		health = 0;
+	else
+		health -= damage;
+}
+
+void Monster::repositioningMonster() {
+	if (sprite.getPosition() == startingPos)
+		state = MonsterState::IDLE;	
+	else
+		sprite.setPosition(goToPosition(sprite.getPosition(), startingPos, 0.3));
+}
+
+void Monster::setMonsterState(MonsterState newState) {
+	std::cout << getRaceConfig(race).name << " is set to state::" << (int)state << "\n" << std::flush;
+	state = newState;
+}
+
+void Monster::setEnemy(Monster* enemy) {
+	this->enemy = enemy;
+}
+
+MonsterState Monster::getMonsterState() {
+	return state;
+}
+
+double Monster::getSpeed() {
+	return speed;
+}
+
+sf::Vector2f Monster::getCurrentPosition() {
+	return sprite.getPosition();
+}
+
 sf::Sprite& Monster::getSprite() {
 	return sprite;
 }
 
-bool Monster::validateRace(int chosenRace) {
-	return chosenRace < (int)Race::LENGTH && chosenRace >= 0;
-}
-
 void Monster::update() {
+
+	std::cout << getRaceConfig(race).name << " is set to state::" << (int)state << " ///// startingPos: " << startingPos.x << "/" << startingPos.y << " //////// currentPos: "
+		<< sprite.getPosition().x << "/" << sprite.getPosition().y << " ///// enemy: " << (int)enemy->getMonsterState() << "////// yay?: " << (sprite.getPosition() == startingPos) << "\n" << std::flush;
+
+	switch (state) {
+	case MonsterState::IDLE:
+		break;
+	case MonsterState::ATTACKING:
+		attack();
+		break;
+	case MonsterState::REPOSITIONING:
+		repositioningMonster();
+		break;
+	}
+
 	healthUI.setString(std::to_string((int)health) + " HP");
+	healthUI.setPosition(sf::Vector2f(sprite.getPosition().x - 10.f, sprite.getPosition().y));
 }
 
 void Monster::draw(sf::RenderWindow& window) {
